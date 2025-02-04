@@ -54,3 +54,5 @@ events.out.tfevents.*
 *.swp
 *.swo
 
+# Dataset files
+Dataset/*

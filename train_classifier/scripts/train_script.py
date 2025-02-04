@@ -1,5 +1,3 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -7,28 +5,37 @@ from tensorflow.keras.models import Sequential
 import pathlib
 import os
 from dotenv import load_dotenv
+
+# Limit GPU memory growth
+gpus = tf.config.experimental.list_physical_devices('GPU')
+if gpus:
+    try:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+    except RuntimeError as e:
+        print(e)
+
+# Load environment variables from .env file
 load_dotenv()
+
 # Set the path to the dataset
 data_dir = pathlib.Path('/home/jneval92/ai-tools/train_classifier/dataset')
 
 # Load the dataset
-batch_size = 32
+batch_size = 2  # Reduce the batch size to fit in GPU memory
 img_height = 180
 img_width = 180
 
+train_dir = data_dir / 'train'
+validation_dir = data_dir / 'validation'
+
 train_ds = tf.keras.utils.image_dataset_from_directory(
-    data_dir,
-    validation_split=0.2,
-    subset="training",
-    seed=123,
+    train_dir,
     image_size=(img_height, img_width),
     batch_size=batch_size)
 
 val_ds = tf.keras.utils.image_dataset_from_directory(
-    data_dir,
-    validation_split=0.2,
-    subset="validation",
-    seed=123,
+    validation_dir,
     image_size=(img_height, img_width),
     batch_size=batch_size)
 
@@ -71,6 +78,7 @@ history = model.fit(
     validation_data=val_ds,
     epochs=epochs
 )
+
 # Save the model
 model.save('/home/jneval92/ai-tools/train_classifier/models/train_model.keras')
 
@@ -82,6 +90,8 @@ loss = history.history['loss']
 val_loss = history.history['val_loss']
 
 epochs_range = range(epochs)
+
+import matplotlib.pyplot as plt
 
 plt.figure(figsize=(8, 8))
 plt.subplot(1, 2, 1)
@@ -96,4 +106,3 @@ plt.plot(epochs_range, val_loss, label='Validation Loss')
 plt.legend(loc='upper right')
 plt.title('Training and Validation Loss')
 plt.show()
-
