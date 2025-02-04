@@ -9,7 +9,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 # Set the path to the dataset
-data_dir = pathlib.Path(DATASET_PATH)
+data_dir = pathlib.Path('/home/jneval92/ai-tools/train_classifier/dataset')
 
 # Load the dataset
 batch_size = 32
@@ -72,7 +72,7 @@ history = model.fit(
     epochs=epochs
 )
 # Save the model
-model.save('/home/jneval92/train_classifier/models/trains_model.keras')
+model.save('/home/jneval92/ai-tools/train_classifier/models/train_model.keras')
 
 # Visualize training results
 acc = history.history['accuracy']
